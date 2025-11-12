@@ -1,0 +1,7 @@
+openai>=1.0.0,<2
+requests
+python-dotenv
+rich
+tqdm
+pandas
+
