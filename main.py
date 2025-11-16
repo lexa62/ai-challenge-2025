@@ -9,6 +9,7 @@ from utils.helpers import console
 DAY_NUM_TO_PACKAGE = {
     1: "day01_simple_ai_agent",
     2: "day02_ai_configuration",
+    3: "day03_interaction",
 }
 
 NAME_TO_DAY_NUM = {
@@ -19,6 +20,9 @@ NAME_TO_DAY_NUM = {
     "day02": 2,
     "day2": 2,
     "ai_configuration": 2,
+    "day03": 3,
+    "day3": 3,
+    "interaction": 3,
 }
 
 

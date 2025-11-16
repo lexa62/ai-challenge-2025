@@ -60,11 +60,81 @@ def _build_payload(
     return payload
 
 
+def _send_message_and_get_response(
+    base_url: str,
+    api_key: str,
+    model: str,
+    messages: List[Dict[str, str]],
+    user_message: str,
+    temperature: Optional[float] = None,
+    max_tokens: Optional[int] = None,
+) -> bool:
+    messages.append({"role": "user", "content": user_message})
+
+    payload = _build_payload(
+        model=model,
+        messages=messages,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        use_completion_tokens=False,
+    )
+
+    try:
+        body = _post_chat_completions(base_url, api_key, payload, timeout_seconds=30.0)
+    except requests.Timeout:
+        console.print("[red]Request timed out. Try again or adjust your prompt.[/red]")
+        return False
+    except requests.HTTPError as http_err:
+        status = http_err.response.status_code if http_err.response is not None else "unknown"
+        snippet = ""
+        try:
+            err_json = http_err.response.json() if http_err.response is not None else {}
+            snippet = err_json.get("error", {}).get("message", "")
+        except Exception:
+            try:
+                snippet = http_err.response.text[:300] if http_err.response is not None else ""
+            except Exception:
+                snippet = ""
+        if status == 400 and ("max_tokens" in (snippet or "") or "max_tokens" in (http_err.response.text if http_err.response is not None else "")):
+            try:
+                payload_retry = _build_payload(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    use_completion_tokens=True,
+                )
+                body = _post_chat_completions(base_url, api_key, payload_retry, timeout_seconds=30.0)
+            except Exception:
+                console.print(f"[red]HTTP {status}[/red] {snippet}")
+                return False
+        else:
+            console.print(f"[red]HTTP {status}[/red] {snippet}")
+            return False
+    except requests.RequestException as req_err:
+        console.print(f"[red]Network error:[/red] {req_err}")
+        return False
+    except json.JSONDecodeError:
+        console.print("[red]Invalid JSON response from server.[/red]")
+        return False
+
+    assistant = _extract_message_content(body)
+    if not assistant:
+        console.print("[yellow]No content returned.[/yellow]")
+        return False
+
+    messages.append({"role": "assistant", "content": assistant})
+    md = Markdown(assistant, code_theme="monokai", justify="left")
+    console.print(Panel.fit(md, border_style="green"))
+    return True
+
+
 def run_cli(
     model: Optional[str] = None,
     temperature: Optional[float] = None,
     max_tokens: Optional[int] = None,
     system_prompt: Optional[str] = "You are a helpful assistant.",
+    initial_message: Optional[str] = None,
 ) -> None:
     api_key = settings.openai_api_key
     if not api_key:
@@ -81,6 +151,12 @@ def run_cli(
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
 
+    if initial_message:
+        if not _send_message_and_get_response(
+            base_url, api_key, active_model, messages, initial_message, temperature, max_tokens
+        ):
+            return
+
     while True:
         try:
             user_input = input("> ").strip()
@@ -92,62 +168,7 @@ def run_cli(
             console.print("[yellow]Goodbye![/yellow]")
             break
 
-        messages.append({"role": "user", "content": user_input})
-
-        payload = _build_payload(
-            model=active_model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            use_completion_tokens=False,
+        _send_message_and_get_response(
+            base_url, api_key, active_model, messages, user_input, temperature, max_tokens
         )
-
-        try:
-            body = _post_chat_completions(base_url, api_key, payload, timeout_seconds=30.0)
-        except requests.Timeout:
-            console.print("[red]Request timed out. Try again or adjust your prompt.[/red]")
-            continue
-        except requests.HTTPError as http_err:
-            status = http_err.response.status_code if http_err.response is not None else "unknown"
-            snippet = ""
-            try:
-                err_json = http_err.response.json() if http_err.response is not None else {}
-                snippet = err_json.get("error", {}).get("message", "")
-            except Exception:
-                try:
-                    snippet = http_err.response.text[:300] if http_err.response is not None else ""
-                except Exception:
-                    snippet = ""
-            # Retry with max_completion_tokens for models that require it
-            if status == 400 and ("max_tokens" in (snippet or "") or "max_tokens" in (http_err.response.text if http_err.response is not None else "")):
-                try:
-                    payload_retry = _build_payload(
-                        model=active_model,
-                        messages=messages,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        use_completion_tokens=True,
-                    )
-                    body = _post_chat_completions(base_url, api_key, payload_retry, timeout_seconds=30.0)
-                except Exception:
-                    console.print(f"[red]HTTP {status}[/red] {snippet}")
-                    continue
-            else:
-                console.print(f"[red]HTTP {status}[/red] {snippet}")
-                continue
-        except requests.RequestException as req_err:
-            console.print(f"[red]Network error:[/red] {req_err}")
-            continue
-        except json.JSONDecodeError:
-            console.print("[red]Invalid JSON response from server.[/red]")
-            continue
-
-        assistant = _extract_message_content(body)
-        if not assistant:
-            console.print("[yellow]No content returned.[/yellow]")
-            continue
-
-        messages.append({"role": "assistant", "content": assistant})
-        md = Markdown(assistant, code_theme="monokai", justify="left")
-        console.print(Panel.fit(md, border_style="green"))
 
