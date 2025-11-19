@@ -11,6 +11,7 @@ DAY_NUM_TO_PACKAGE = {
     2: "day02_ai_configuration",
     3: "day03_interaction",
     4: "day04_temperature",
+    5: "day05_tokens",
 }
 
 NAME_TO_DAY_NUM = {
@@ -27,6 +28,10 @@ NAME_TO_DAY_NUM = {
     "day04": 4,
     "day4": 4,
     "temperature": 4,
+    "day05": 5,
+    "day5": 5,
+    "tokens": 5,
+    "token_counting": 5,
 }
 
 
