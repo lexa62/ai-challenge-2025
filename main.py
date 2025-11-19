@@ -12,6 +12,7 @@ DAY_NUM_TO_PACKAGE = {
     3: "day03_interaction",
     4: "day04_temperature",
     5: "day05_tokens",
+    6: "day06_subagents_interaction",
 }
 
 NAME_TO_DAY_NUM = {
@@ -32,6 +33,10 @@ NAME_TO_DAY_NUM = {
     "day5": 5,
     "tokens": 5,
     "token_counting": 5,
+    "day06": 6,
+    "day6": 6,
+    "subagents": 6,
+    "subagents_interaction": 6,
 }
 
 
