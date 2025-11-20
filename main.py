@@ -13,6 +13,7 @@ DAY_NUM_TO_PACKAGE = {
     4: "day04_temperature",
     5: "day05_tokens",
     6: "day06_subagents_interaction",
+    7: "day07_dialogue_compression",
 }
 
 NAME_TO_DAY_NUM = {
@@ -37,6 +38,10 @@ NAME_TO_DAY_NUM = {
     "day6": 6,
     "subagents": 6,
     "subagents_interaction": 6,
+    "day07": 7,
+    "day7": 7,
+    "dialogue_compression": 7,
+    "compression": 7,
 }
 
 
