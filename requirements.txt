@@ -5,4 +5,5 @@ rich
 tqdm
 pandas
 tiktoken
+mcp
 
