@@ -15,6 +15,7 @@ DAY_NUM_TO_PACKAGE = {
     6: "day06_subagents_interaction",
     7: "day07_dialogue_compression",
     8: "day08_mcp_integration",
+    9: "day09_custom_mcp_tool",
 }
 
 NAME_TO_DAY_NUM = {
@@ -47,6 +48,10 @@ NAME_TO_DAY_NUM = {
     "day8": 8,
     "mcp_integration": 8,
     "mcp": 8,
+    "day09": 9,
+    "day9": 9,
+    "custom_mcp_tool": 9,
+    "custom_mcp": 9,
 }
 
 
