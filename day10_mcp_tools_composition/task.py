@@ -1,7 +1,6 @@
 import asyncio
 import json
 import os
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -151,7 +150,7 @@ async def run_agent_with_mcp_tools(
     user_message: str,
     messages: List[Dict[str, str]],
 ) -> bool:
-    """Run agent with MCP tool calling capability."""
+    """Run agent with MCP tool calling capability - supports multi-step tool chaining."""
     messages.append({"role": "user", "content": user_message})
 
     mcp_tools = await list_mcp_tools(session)
@@ -161,59 +160,10 @@ async def run_agent_with_mcp_tools(
 
     openai_tools = convert_mcp_tools_to_openai_format(mcp_tools)
 
-    payload = {
-        "model": model,
-        "messages": messages,
-        "tools": openai_tools,
-        "tool_choice": "auto"
-    }
+    max_iterations = 10
+    iteration = 0
 
-    try:
-        body = _post_chat_completions(base_url, api_key, payload, timeout_seconds=30.0)
-    except requests.Timeout:
-        console.print("[red]Request timed out. Try again or adjust your prompt.[/red]")
-        return False
-    except requests.HTTPError as http_err:
-        status = http_err.response.status_code if http_err.response is not None else "unknown"
-        snippet = ""
-        try:
-            err_json = http_err.response.json() if http_err.response is not None else {}
-            snippet = err_json.get("error", {}).get("message", "")
-        except Exception:
-            try:
-                snippet = http_err.response.text[:300] if http_err.response is not None else ""
-            except Exception:
-                snippet = ""
-        console.print(f"[red]HTTP {status}[/red] {snippet}")
-        return False
-    except requests.RequestException as req_err:
-        console.print(f"[red]Network error:[/red] {req_err}")
-        return False
-    except json.JSONDecodeError:
-        console.print("[red]Invalid JSON response from server.[/red]")
-        return False
-
-    assistant_message = body["choices"][0]["message"]
-    tool_calls = _extract_tool_calls(body)
-
-    if tool_calls:
-        messages.append(assistant_message)
-
-        for tool_call in tool_calls:
-            tool_name = tool_call["function"]["name"]
-            tool_args = json.loads(tool_call["function"]["arguments"])
-
-            console.print(f"[dim]Calling tool: {tool_name}[/dim]")
-            tool_result = await call_mcp_tool(session, tool_name, tool_args)
-
-            if tool_result:
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": tool_call["id"],
-                    "content": tool_result
-                })
-                console.print(Panel(tool_result, border_style="cyan", title=f"Tool Result: {tool_name}"))
-
+    while iteration < max_iterations:
         payload = {
             "model": model,
             "messages": messages,
@@ -223,24 +173,66 @@ async def run_agent_with_mcp_tools(
 
         try:
             body = _post_chat_completions(base_url, api_key, payload, timeout_seconds=30.0)
-            assistant_message = body["choices"][0]["message"]
+        except requests.Timeout:
+            console.print("[red]Request timed out. Try again or adjust your prompt.[/red]")
+            return False
+        except requests.HTTPError as http_err:
+            status = http_err.response.status_code if http_err.response is not None else "unknown"
+            snippet = ""
+            try:
+                err_json = http_err.response.json() if http_err.response is not None else {}
+                snippet = err_json.get("error", {}).get("message", "")
+            except Exception:
+                try:
+                    snippet = http_err.response.text[:300] if http_err.response is not None else ""
+                except Exception:
+                    snippet = ""
+            console.print(f"[red]HTTP {status}[/red] {snippet}")
+            return False
+        except requests.RequestException as req_err:
+            console.print(f"[red]Network error:[/red] {req_err}")
+            return False
+        except json.JSONDecodeError:
+            console.print("[red]Invalid JSON response from server.[/red]")
+            return False
+
+        assistant_message = body["choices"][0]["message"]
+        tool_calls = _extract_tool_calls(body)
+
+        if tool_calls:
+            messages.append(assistant_message)
+
+            for tool_call in tool_calls:
+                tool_name = tool_call["function"]["name"]
+                tool_args = json.loads(tool_call["function"]["arguments"])
+
+                console.print(f"[dim]→ Calling tool: {tool_name}[/dim]")
+                tool_result = await call_mcp_tool(session, tool_name, tool_args)
+
+                if tool_result:
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call["id"],
+                        "content": tool_result
+                    })
+                    console.print(Panel(tool_result[:500] + ("..." if len(tool_result) > 500 else ""),
+                                      border_style="cyan", title=f"Tool Result: {tool_name}"))
+
+            iteration += 1
+        else:
             content = _extract_message_content(body)
             if content:
                 messages.append(assistant_message)
                 md = Markdown(content, code_theme="monokai", justify="left")
-                console.print(Panel.fit(md, border_style="green", title="Assistant Response"))
-        except Exception as e:
-            console.print(f"[red]Error getting final response: {e}[/red]")
-            return False
-    else:
-        content = _extract_message_content(body)
-        if content:
-            messages.append(assistant_message)
-            md = Markdown(content, code_theme="monokai", justify="left")
-            console.print(Panel.fit(md, border_style="green", title="Assistant Response"))
-        else:
-            console.print("[yellow]No content returned.[/yellow]")
-            return False
+                console.print(Panel.fit(md, border_style="green", title="Final Response"))
+            else:
+                console.print("[yellow]No content returned.[/yellow]")
+                return False
+            break
+
+    if iteration >= max_iterations:
+        console.print("[yellow]Maximum iterations reached. Stopping tool chain.[/yellow]")
+        return False
 
     return True
 
@@ -256,7 +248,7 @@ def display_tools(tools: List[Dict[str, Any]]) -> None:
     console.print()
 
     tools_table = Table(show_header=True, header_style="bold magenta")
-    tools_table.add_column("Tool Name", style="cyan", width=30)
+    tools_table.add_column("Tool Name", style="cyan", width=20)
     tools_table.add_column("Description", style="white")
     tools_table.add_column("Parameters", style="dim", width=40)
 
@@ -280,7 +272,7 @@ def display_tools(tools: List[Dict[str, Any]]) -> None:
 
 
 async def main_async() -> None:
-    """Main async function to run the MCP tool demonstration."""
+    """Main async function to run the MCP tool composition demonstration."""
     api_key = settings.openai_api_key
     if not api_key:
         console.print("[red]OPENAI_API_KEY is not set. Add it to your .env and try again.[/red]")
@@ -289,7 +281,7 @@ async def main_async() -> None:
     base_url = _get_base_url()
     model = settings.openai_model
 
-    console.print("[bold cyan]Day 9 — Custom MCP Tool[/bold cyan]")
+    console.print("[bold cyan]Day 10 — MCP Tools Composition[/bold cyan]")
     console.print()
     console.print("[dim]Starting MCP server and connecting agent...[/dim]")
     console.print()
@@ -319,11 +311,19 @@ async def main_async() -> None:
                 messages: List[Dict[str, str]] = [
                     {
                         "role": "system",
-                        "content": "You are a helpful assistant with access to weather information. When users ask about weather, use the get_weather tool to provide accurate information."
+                        "content": (
+                            "You are a helpful assistant with access to tools that can search documentation, "
+                            "summarize text, and save files. When users ask you to search for documentation, "
+                            "summarize it, and save the result, you should chain these tools together: "
+                            "1) Use searchDocs to find relevant documentation, "
+                            "2) Use summarize to create a summary of the found content, "
+                            "3) Use saveToFile to save the summary to a file. "
+                            "Always use the tools in sequence when appropriate."
+                        )
                     }
                 ]
 
-                initial_message = "What's the weather like in New York?"
+                initial_message = "Search for Python async documentation, summarize it, and save the summary to a file called 'async_summary.txt'"
                 console.print(f"[dim]Example query: {initial_message}[/dim]")
                 console.print()
 
@@ -332,7 +332,7 @@ async def main_async() -> None:
                 )
 
                 console.print()
-                console.print("[dim]You can now ask about weather in different cities.[/dim]")
+                console.print("[dim]You can now try different queries to test the tool pipeline.[/dim]")
                 console.print()
 
                 while True:
@@ -358,7 +358,6 @@ async def main_async() -> None:
 
 
 def run() -> None:
-    """Main entry point for Day 9 task."""
+    """Main entry point for Day 10 task."""
     asyncio.run(main_async())
-
 

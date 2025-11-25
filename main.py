@@ -16,6 +16,7 @@ DAY_NUM_TO_PACKAGE = {
     7: "day07_dialogue_compression",
     8: "day08_mcp_integration",
     9: "day09_custom_mcp_tool",
+    10: "day10_mcp_tools_composition",
 }
 
 NAME_TO_DAY_NUM = {
@@ -52,6 +53,10 @@ NAME_TO_DAY_NUM = {
     "day9": 9,
     "custom_mcp_tool": 9,
     "custom_mcp": 9,
+    "day10": 10,
+    "mcp_tools_composition": 10,
+    "tools_composition": 10,
+    "mcp_composition": 10,
 }
 
 
