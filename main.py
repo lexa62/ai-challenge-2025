@@ -17,6 +17,7 @@ DAY_NUM_TO_PACKAGE = {
     8: "day08_mcp_integration",
     9: "day09_custom_mcp_tool",
     10: "day10_mcp_tools_composition",
+    11: "day11_external_memory",
 }
 
 NAME_TO_DAY_NUM = {
@@ -57,6 +58,10 @@ NAME_TO_DAY_NUM = {
     "mcp_tools_composition": 10,
     "tools_composition": 10,
     "mcp_composition": 10,
+    "day11": 11,
+    "day11_external_memory": 11,
+    "external_memory": 11,
+    "memory": 11,
 }
 
 
