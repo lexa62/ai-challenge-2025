@@ -6,4 +6,10 @@ tqdm
 pandas
 tiktoken
 mcp
+SpeechRecognition>=3.10.0
+pyaudio>=0.2.11
+# Note: pyaudio requires PortAudio system library
+# On macOS: brew install portaudio
+# On Ubuntu/Debian: sudo apt-get install portaudio19-dev
+# On Fedora: sudo dnf install portaudio-devel
 

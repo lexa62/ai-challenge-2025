@@ -18,6 +18,7 @@ DAY_NUM_TO_PACKAGE = {
     9: "day09_custom_mcp_tool",
     10: "day10_mcp_tools_composition",
     11: "day11_external_memory",
+    12: "day12_voice_agent",
 }
 
 NAME_TO_DAY_NUM = {
@@ -62,6 +63,10 @@ NAME_TO_DAY_NUM = {
     "day11_external_memory": 11,
     "external_memory": 11,
     "memory": 11,
+    "day12": 12,
+    "day12_voice_agent": 12,
+    "voice_agent": 12,
+    "voice": 12,
 }
 
 
