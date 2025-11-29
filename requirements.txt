@@ -12,4 +12,6 @@ pyaudio>=0.2.11
 # On macOS: brew install portaudio
 # On Ubuntu/Debian: sudo apt-get install portaudio19-dev
 # On Fedora: sudo dnf install portaudio-devel
+numpy
+faiss-cpu
 
