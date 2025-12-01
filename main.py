@@ -20,6 +20,7 @@ DAY_NUM_TO_PACKAGE = {
     11: "day11_external_memory",
     12: "day12_voice_agent",
     13: "day13_document_indexing",
+    14: "day14_rag_query",
 }
 
 NAME_TO_DAY_NUM = {
@@ -72,6 +73,10 @@ NAME_TO_DAY_NUM = {
     "day13_document_indexing": 13,
     "document_indexing": 13,
     "indexing": 13,
+    "day14": 14,
+    "day14_rag_query": 14,
+    "rag_query": 14,
+    "rag": 14,
 }
 
 
