@@ -22,6 +22,7 @@ DAY_NUM_TO_PACKAGE = {
     13: "day13_document_indexing",
     14: "day14_rag_query",
     15: "day15_reranking_filtering",
+    16: "day16_citations_sources",
 }
 
 NAME_TO_DAY_NUM = {
@@ -83,6 +84,11 @@ NAME_TO_DAY_NUM = {
     "reranking_filtering": 15,
     "reranking": 15,
     "filtering": 15,
+    "day16": 16,
+    "day16_citations_sources": 16,
+    "citations_sources": 16,
+    "citations": 16,
+    "sources": 16,
 }
 
 
