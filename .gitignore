@@ -56,7 +56,6 @@ data/
 
 # Environment files
 .env
-.env.*
 
 # IDE/editor
 .vscode/

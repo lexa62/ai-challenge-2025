@@ -14,4 +14,5 @@ pyaudio>=0.2.11
 # On Fedora: sudo dnf install portaudio-devel
 numpy
 faiss-cpu
+fal-client
 

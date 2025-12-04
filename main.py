@@ -23,6 +23,7 @@ DAY_NUM_TO_PACKAGE = {
     14: "day14_rag_query",
     15: "day15_reranking_filtering",
     16: "day16_citations_sources",
+    17: "day17_image_generation",
 }
 
 NAME_TO_DAY_NUM = {
@@ -89,6 +90,10 @@ NAME_TO_DAY_NUM = {
     "citations_sources": 16,
     "citations": 16,
     "sources": 16,
+    "day17": 17,
+    "day17_image_generation": 17,
+    "image_generation": 17,
+    "image_gen": 17,
 }
 
 
