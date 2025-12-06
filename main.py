@@ -24,6 +24,7 @@ DAY_NUM_TO_PACKAGE = {
     15: "day15_reranking_filtering",
     16: "day16_citations_sources",
     17: "day17_image_generation",
+    18: "day18_prompt_style_systems",
 }
 
 NAME_TO_DAY_NUM = {
@@ -94,6 +95,11 @@ NAME_TO_DAY_NUM = {
     "day17_image_generation": 17,
     "image_generation": 17,
     "image_gen": 17,
+    "day18": 18,
+    "day18_prompt_style_systems": 18,
+    "prompt_style_systems": 18,
+    "style_systems": 18,
+    "prompt_style": 18,
 }
 
 

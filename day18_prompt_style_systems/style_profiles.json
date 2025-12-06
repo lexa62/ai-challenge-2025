@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Modern Minimalist",
+    "color_palette": [
+      "#E8E8E8",
+      "#2C2C2C",
+      "#6B9BD1",
+      "#F5F5F5"
+    ],
+    "mood": "clean, serene, sophisticated",
+    "visual_style": {
+      "dimensionality": "flat",
+      "texture": "smooth",
+      "detail_level": "high"
+    },
+    "dos": [
+      "Use clean lines and geometric shapes",
+      "Maintain ample white space",
+      "Focus on simplicity and clarity",
+      "Use muted, desaturated colors",
+      "Emphasize typography and negative space"
+    ],
+    "donts": [
+      "Avoid busy patterns or textures",
+      "No excessive gradients or shadows",
+      "Avoid cluttered compositions",
+      "No bright, saturated colors",
+      "Avoid 3D effects or depth"
+    ],
+    "style_description": "Flat design with clean lines, muted color palette, high detail in simplicity, ample white space, minimalist aesthetic"
+  },
+  {
+    "name": "Bold Playful",
+    "color_palette": [
+      "#FF6B6B",
+      "#4ECDC4",
+      "#FFE66D",
+      "#95E1D3"
+    ],
+    "mood": "energetic, vibrant, dynamic",
+    "visual_style": {
+      "dimensionality": "3D",
+      "texture": "smooth",
+      "detail_level": "medium"
+    },
+    "dos": [
+      "Use vibrant, saturated colors",
+      "Create dynamic compositions with movement",
+      "Apply 3D effects and depth",
+      "Use playful shapes and forms",
+      "Emphasize energy and excitement"
+    ],
+    "donts": [
+      "Avoid muted or desaturated colors",
+      "No flat, static compositions",
+      "Avoid minimalism or excessive white space",
+      "No dark or somber tones",
+      "Avoid low contrast"
+    ],
+    "style_description": "3D design with vibrant colors, dynamic compositions, medium detail, playful energy, bold and exciting aesthetic"
+  },
+  {
+    "name": "Vintage Elegant",
+    "color_palette": [
+      "#D4A574",
+      "#8B6F47",
+      "#E8D5B7",
+      "#5C4A37"
+    ],
+    "mood": "warm, classic, refined",
+    "visual_style": {
+      "dimensionality": "flat",
+      "texture": "textured",
+      "detail_level": "high"
+    },
+    "dos": [
+      "Use warm, earthy tones",
+      "Apply subtle textures and grain",
+      "Include classic design elements",
+      "Use elegant typography",
+      "Emphasize craftsmanship and detail"
+    ],
+    "donts": [
+      "Avoid bright, neon colors",
+      "No modern, futuristic elements",
+      "Avoid flat, textureless surfaces",
+      "No harsh, digital aesthetics",
+      "Avoid minimalism"
+    ],
+    "style_description": "Flat design with warm, earthy color palette, textured surfaces, high detail, classic elegance, vintage aesthetic"
+  }
+]
