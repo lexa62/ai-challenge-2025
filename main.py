@@ -25,6 +25,7 @@ DAY_NUM_TO_PACKAGE = {
     16: "day16_citations_sources",
     17: "day17_image_generation",
     18: "day18_prompt_style_systems",
+    19: "day19_vision_qa_agent",
 }
 
 NAME_TO_DAY_NUM = {
@@ -100,6 +101,11 @@ NAME_TO_DAY_NUM = {
     "prompt_style_systems": 18,
     "style_systems": 18,
     "prompt_style": 18,
+    "day19": 19,
+    "day19_vision_qa_agent": 19,
+    "vision_qa_agent": 19,
+    "vision_qa": 19,
+    "qa_agent": 19,
 }
 
 

@@ -16,6 +16,7 @@ class Settings:
     fal_api_key: Optional[str] = os.getenv("FAL_API_KEY")
     provider: str = os.getenv("LLM_PROVIDER", "openai")
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    openai_vision_model: str = os.getenv("OPENAI_VISION_MODEL", "gpt-4o")
 
 
 settings = Settings()

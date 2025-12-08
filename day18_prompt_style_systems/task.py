@@ -324,3 +324,4 @@ def run() -> None:
     console.print()
     success("Image generation and analysis complete!")
     console.print()
+

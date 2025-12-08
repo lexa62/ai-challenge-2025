@@ -105,3 +105,4 @@ def build_prompt(subject: str, style_profile: Dict, aspect_ratio: str) -> str:
         prompt_parts.append(f"Format: {aspect_ratio_note}")
 
     return ", ".join(prompt_parts)
+

@@ -147,3 +147,4 @@ def analyze_distinctiveness(style_results: Dict[str, List[Dict]]) -> Dict[str, A
         "comparison_matrix": comparison_matrix,
         "styles_compared": style_names,
     }
+
