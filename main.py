@@ -26,6 +26,7 @@ DAY_NUM_TO_PACKAGE = {
     17: "day17_image_generation",
     18: "day18_prompt_style_systems",
     19: "day19_vision_qa_agent",
+    20: "day20_meeting_summarizer",
 }
 
 NAME_TO_DAY_NUM = {
@@ -106,6 +107,10 @@ NAME_TO_DAY_NUM = {
     "vision_qa_agent": 19,
     "vision_qa": 19,
     "qa_agent": 19,
+    "day20": 20,
+    "day20_meeting_summarizer": 20,
+    "meeting_summarizer": 20,
+    "meeting_notes": 20,
 }
 
 
@@ -119,7 +124,7 @@ def resolve_day_identifier(day: Union[int, str]) -> Optional[int]:
     return NAME_TO_DAY_NUM.get(text)
 
 
-def run_task(day: Union[int, str]) -> None:
+def run_task(day: Union[int, str], extra_args: Optional[list[str]] = None) -> None:
     num = resolve_day_identifier(day)
     if num is None:
         console.print(f"[red]Unknown day/task:[/red] {day}")
@@ -134,20 +139,41 @@ def run_task(day: Union[int, str]) -> None:
     if not hasattr(module, "run"):
         console.print(f"[red]Module {module_name} has no 'run' function.[/red]")
         sys.exit(1)
-    module.run()
+
+    if extra_args:
+        # Prefer tasks that accept an argv-like parameter; fall back to legacy signature.
+        try:
+            module.run(extra_args)
+            return
+        except TypeError:
+            original_argv = sys.argv
+            try:
+                sys.argv = [original_argv[0]] + list(extra_args)
+                module.run()
+            finally:
+                sys.argv = original_argv
+    else:
+        module.run()
 
 
 def main(argv: Optional[list[str]] = None) -> None:
     parser = argparse.ArgumentParser(description="AI Advent Challenge 2025 CLI")
     parser.add_argument("--day", type=int, help="Run by day number (e.g., 1)")
     parser.add_argument("--task", type=str, help="Run by task name (e.g., day01, prompting)")
+    parser.add_argument(
+        "task_args",
+        nargs=argparse.REMAINDER,
+        help="Additional arguments passed through to the selected task.",
+    )
     args = parser.parse_args(argv)
 
+    extra_args = args.task_args or None
+
     if args.day is not None:
-        run_task(args.day)
+        run_task(args.day, extra_args=extra_args)
         return
     if args.task:
-        run_task(args.task)
+        run_task(args.task, extra_args=extra_args)
         return
 
     # Default behavior: run Day 1 agent directly

@@ -17,6 +17,7 @@ class Settings:
     provider: str = os.getenv("LLM_PROVIDER", "openai")
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     openai_vision_model: str = os.getenv("OPENAI_VISION_MODEL", "gpt-4o")
+    openai_audio_model: str = os.getenv("OPENAI_AUDIO_MODEL", "gpt-4o-mini-transcribe")
 
 
 settings = Settings()
